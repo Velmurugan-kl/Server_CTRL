@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.MY_TV_DASH" parent="Theme.Leanback">
+        <!-- Customize your theme here -->
+        <item name="colorPrimary">@color/fastlane_background</item>
+        <item name="colorPrimaryDark">@android:color/black</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+</resources>

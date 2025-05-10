@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="140dp"
+        android:layout_height="150dp"
+        android:layout_margin="5dp"
+        android:overScrollMode="ifContentScrolls"
+        android:padding="24dp"
+        android:background="@drawable/card_background"
+        android:elevation="4dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+        <TextView
+            android:id="@+id/statusLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Truenas State"
+            android:textSize="18sp"
+            android:textColor="#AAAAAA"
+            android:paddingBottom="2dp"
+            android:fontFamily="sans-serif" />
+
+        <TextView
+            android:id="@+id/statusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:text="Checking..."
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:fontFamily="monospace" />
+    </LinearLayout>
+
+</merge>
