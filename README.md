@@ -72,7 +72,3 @@ This project enables remote and local control of a server and router using an ES
 - Implement UI feedback (server/router status).
 - Add more device control options.
 - Support for multiple servers or devices.
-
-## License
-
-This project is open-source and available under the MIT License.
