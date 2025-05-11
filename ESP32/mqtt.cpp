@@ -44,6 +44,14 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
       handleCommand(command,"MQTT");
     }
   }
+  else if(topicStr == MAIN_PWR_COMMAND){
+      if(command == "STATUS"){
+      mqttClient.publish(MAIN_PWR,handleStatus("PWR").c_str());
+    }
+    else{
+      handleCommand(command,"MQTT");
+    }
+  }
   else{
       handleCommand(command,"MQTT");
   }
@@ -65,6 +73,7 @@ void reconnectMQTT(PubSubClient &mqttClient) {
       mqttClient.subscribe(SERVER_COMMAND);
       mqttClient.subscribe(ROUTER_COMMAND);
       mqttClient.subscribe(NAS_COMMAND);
+      mqttClient.subscribe(MAIN_PWR_COMMAND);
     } else {
       Serial.print("Connection failed, rc=");
       Serial.print(mqttClient.state());

@@ -23,14 +23,16 @@ void handleCommand(String command, String source) {
   } 
   else if (command == "ROUTER_ON") {
     digitalWrite(rou, HIGH);
-    delay(1000);
+    delay(800);
     digitalWrite(rou, LOW);
 
   } 
   else if (command == "ROUTER_OFF") {
     digitalWrite(rou, HIGH);
-    delay(1000);
+    delay(800);
     digitalWrite(rou, LOW);
+    // delay(120000);
+    // handleCommand("PWR_OFF","ESPEND");
   } 
   else if (command == "PWR_ON") {
     digitalWrite(PWR, HIGH);
@@ -81,6 +83,14 @@ String handleStatus(String command){
       return "on";
     }
     return "off";
+  }
+  else if(command == "PWR"){
+    if(PWR == HIGH){
+      return "on";
+    }
+    else{
+      return "off";
+    }
   }
   else{
     return "null";
