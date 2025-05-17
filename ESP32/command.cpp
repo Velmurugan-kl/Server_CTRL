@@ -36,6 +36,8 @@ void handleCommand(String command, String source) {
   } 
   else if (command == "PWR_ON") {
     digitalWrite(PWR, HIGH);
+    delay(120000);
+    handleCommand("ROUTER_ON", "ESPSTARTUP");
   } 
   else if (command == "PWR_OFF") {
     digitalWrite(PWR, LOW);
@@ -84,17 +86,13 @@ String handleStatus(String command){
     }
     return "off";
   }
-  else if(command == "PWR"){
-    if(PWR == HIGH){
-      return "on";
-    }
-    else{
-      return "off";
-    }
+  else if (command == "PWR") {
+  return digitalRead(PWR) == HIGH ? "on" : "off";
   }
   else{
     return "null";
   }
+  
 
 }
 

@@ -42,7 +42,7 @@ void setup() {
   Serial.print("Ethernet IP: ");
   Serial.println(Ethernet.localIP());
 
-  handleCommand("PWR_ON", "ESPSTARTUP");
+  // handleCommand("PWR_ON", "ESPSTARTUP");
   // delay(120000);
   // handleCommand("ROUTER_ON", "ESPSTARTUP");
   setupMQTT();

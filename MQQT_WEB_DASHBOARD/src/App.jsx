@@ -5,6 +5,7 @@ import StatusTextCard from './StatusTextCard';
 import StatusButtonCard from './StatusButtonCard';
 import { connectMQTT } from './mqttService';
 import PasswordModal from './PasswordModal';
+import { useMemo } from 'react';
 
 function App() {
   const clientRef = useRef(null);
@@ -14,12 +15,16 @@ function App() {
   const [routerStatus, setRouterStatus] = useState('Loading...');
   const [pingStatus, setPingStatus] = useState('Checking...');
   const [powerStatus, setPowerStatus] = useState('Checking...');
-  const serverPower =  serverStatus.trim().toLowerCase() === 'on' ? 'Power OFF' : 'Power ON';
-  const routerPower = routerStatus.trim().toLowerCase() === 'on' ? 'Power OFF' : 'Power ON';
-  const powerCurrent = powerStatus.trim().toLowerCase() === 'on' ? 'Power OFF' : 'Power ON';
-  const serverCommand = serverStatus.trim().toLowerCase() === 'on' ? 'NAS_OFF' : 'NAS_ON';
-  const routerCommand = routerStatus.trim().toLowerCase() === 'on' ? 'ROUTER_OFF' : 'ROUTER_ON';
-  const powerCommand = routerStatus.trim().toLowerCase() === 'on' ? 'PWR_OFF' : 'PWR_ON';
+  const normalizedServerStatus = useMemo(() => serverStatus.trim().toLowerCase(), [serverStatus]);
+  const normalizedRouterStatus = useMemo(() => routerStatus.trim().toLowerCase(), [routerStatus]);
+  const normalizedPowerStatus = useMemo(() => powerStatus.trim().toLowerCase(), [powerStatus]);
+  const serverPower = useMemo(() => normalizedServerStatus === 'on' ? 'Power OFF' : 'Power ON', [normalizedServerStatus]);
+  const routerPower = useMemo(() => normalizedRouterStatus === 'on' ? 'Power OFF' : 'Power ON', [normalizedRouterStatus]);
+  const powerCurrent = useMemo(() => normalizedPowerStatus === 'on' ? 'Power OFF' : 'Power ON', [normalizedPowerStatus]);
+  const serverCommand = useMemo(() => normalizedServerStatus === 'on' ? 'NAS_OFF' : 'NAS_ON', [normalizedServerStatus]);
+  const routerCommand = useMemo(() => normalizedRouterStatus === 'on' ? 'ROUTER_OFF' : 'ROUTER_ON', [normalizedRouterStatus]);
+  const powerCommand = useMemo(() => normalizedPowerStatus === 'on' ? 'PWR_OFF' : 'PWR_ON', [normalizedPowerStatus]);
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
 
@@ -37,23 +42,23 @@ function App() {
     });
 
     client.on('message', (topic, message) => {
-      const msg = message.toString();
-      if (topic === import.meta.env.VITE_SERVER_PATH) {
-        setServerStatus(msg);
-        console.log("server status ---> "+serverStatus);
-      } else if (topic === import.meta.env.VITE_ROUTER_PATH) {
-        setRouterStatus(msg);
-        console.log("router status ---> "+routerStatus);
-      } else if (topic === import.meta.env.VITE_NAS_PATH) {
-        setPingStatus(msg);
-        console.log("nas status ---> "+pingStatus);
-      } else if (topic === import.meta.env.VITE_PWR_STATUS_PATH) {
-        setPowerStatus(msg);
-        console.log("power status ---> "+powerStatus);
-      }
-      
-      
-    });
+  const msg = message.toString();
+
+  if (topic === import.meta.env.VITE_SERVER_PATH) {
+    console.log("server status ---> " + msg);
+    setServerStatus(msg);
+  } else if (topic === import.meta.env.VITE_ROUTER_PATH) {
+    console.log("router status ---> " + msg);
+    setRouterStatus(msg);
+  } else if (topic === import.meta.env.VITE_NAS_PATH) {
+    console.log("nas status ---> " + msg);
+    setPingStatus(msg);
+  } else if (topic === import.meta.env.VITE_PWR_STATUS_PATH) {
+    console.log("power status ---> " + msg);
+    setPowerStatus(msg);
+  }
+});
+
 
   }, []);
 
@@ -127,8 +132,8 @@ function App() {
         />
         <StatusButtonCard
           label="Main Power"
-          status={powerCurrent}
-          buttonLabel={powerStatus}
+          status={powerStatus}
+          buttonLabel={powerCurrent}
           onPowerClick={handlePower}
           disabled={!isAuthenticated}
         />
