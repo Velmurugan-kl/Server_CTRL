@@ -6,10 +6,13 @@ import StatusButtonCard from './StatusButtonCard';
 import { connectMQTT } from './mqttService';
 import PasswordModal from './PasswordModal';
 import { useMemo } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function App() {
   const clientRef = useRef(null);
-
+  
   // State to hold statuses received from MQTT
   const [serverStatus, setServerStatus] = useState('Loading...');
   const [routerStatus, setRouterStatus] = useState('Loading...');
@@ -24,10 +27,12 @@ function App() {
   const serverCommand = useMemo(() => normalizedServerStatus === 'on' ? 'NAS_OFF' : 'NAS_ON', [normalizedServerStatus]);
   const routerCommand = useMemo(() => normalizedRouterStatus === 'on' ? 'ROUTER_OFF' : 'ROUTER_ON', [normalizedRouterStatus]);
   const powerCommand = useMemo(() => normalizedPowerStatus === 'on' ? 'PWR_OFF' : 'PWR_ON', [normalizedPowerStatus]);
-
+  
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
+  
   useEffect(() => {
     const client = connectMQTT();
     clientRef.current = client;
@@ -43,34 +48,40 @@ function App() {
 
     client.on('message', (topic, message) => {
   const msg = message.toString();
+  console.log(`[MQTT RECEIVED] Topic: ${topic} | Message: ${msg}`);
 
-  if (topic === import.meta.env.VITE_SERVER_PATH) {
-    console.log("server status ---> " + msg);
+  // Handle messages
+  if (topic === import.meta.env.VITE_PWR_STATUS_PATH) {
+    setPowerStatus(msg);
+  } else if (topic === import.meta.env.VITE_SERVER_PATH) {
     setServerStatus(msg);
   } else if (topic === import.meta.env.VITE_ROUTER_PATH) {
-    console.log("router status ---> " + msg);
     setRouterStatus(msg);
   } else if (topic === import.meta.env.VITE_NAS_PATH) {
-    console.log("nas status ---> " + msg);
     setPingStatus(msg);
-  } else if (topic === import.meta.env.VITE_PWR_STATUS_PATH) {
-    console.log("power status ---> " + msg);
-    setPowerStatus(msg);
   }
 });
+
 
 
   }, []);
 
   const handleRefresh = () => {
-    console.log('Refreshing...');
-    const client = clientRef.current;
-    client.publish(import.meta.env.VITE_PWR_PATH, 'STATUS');
-    client.publish(import.meta.env.VITE_SERVER_STATUS_PATH, 'STATUS');
-    client.publish(import.meta.env.VITE_ROUTER_STATUS_PATH, 'STATUS');
-    client.publish(import.meta.env.VITE_NAS_PING_PATH, 'STATUS');
-    
-  };
+  console.log('Refreshing...');
+  setRefreshing(true);
+
+  const client = clientRef.current;
+  client.publish(import.meta.env.VITE_PWR_PATH, 'STATUS');
+  client.publish(import.meta.env.VITE_SERVER_STATUS_PATH, 'STATUS');
+  client.publish(import.meta.env.VITE_ROUTER_STATUS_PATH, 'STATUS');
+  client.publish(import.meta.env.VITE_NAS_PING_PATH, 'STATUS');
+
+  setTimeout(() => {
+  setRefreshing(false);
+  toast.warn('No MQTT response received. Please check your connection or devices.');
+}, 15000);
+};
+
 
   const handleServerPower = () => {
     const client = clientRef.current;
@@ -149,6 +160,7 @@ function App() {
           onClose={handlePasswordCancel}
         />
       )}
+      <ToastContainer position="top-center" autoClose={9000} />
     </>
   );
   
