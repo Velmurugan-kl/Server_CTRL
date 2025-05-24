@@ -4,95 +4,110 @@ const Layout = ({ children, onRefresh, onSignIn, isAuthenticated }) => {
   return (
     <div
       style={{
-        width: "100vw",             // Full viewport width
-        minHeight: "100vh",         // Full height
-        backgroundColor: "#101010",
+        width: "100vw",
+        minHeight: "100vh",
+        backgroundColor: "#0f0f0f",
         display: "flex",
         flexDirection: "column",
-        overflow: "hidden",
+        color: "#f0f0f0",
+        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
       }}
       tabIndex={0}
     >
       {/* Header */}
-      <div
-  style={{
-    minHeight: "72px",
-    backgroundColor: "#1E1E1E",
-    display: "flex",
-    flexWrap: "wrap",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "0 16px",
-    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.3)",
-    width: "100%",
-    boxSizing: "border-box", // important for padding
-    overflow: "visible",     // so buttons aren't clipped
-  }}
->
-  ...
-  <div style={{ display: "flex", gap: "10px", marginTop: "8px", minWidth: 0 }}>
-    <button
-      onClick={onSignIn}
-      style={{
-        height: "40px",
-        backgroundColor: "#333",
-        border: "none",
-        borderRadius: "8px",
-        padding: "0 12px",
-        color: "#fff",
-        cursor: "pointer",
-        fontWeight: "bold",
-        whiteSpace: "nowrap",
-        flexShrink: 0,         // prevent shrinking
-      }}
-      title="Sign In"
-    >
-      Sign In
-    </button>
+      <header
+        style={{
+          height: "64px",
+          backgroundColor: "#1a1a1a",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "0 20px",
+          borderBottom: "1px solid #333",
+          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.5)",
+          zIndex: 10,
+        }}
+      >
+        <h1
+          style={{
+            fontSize: "1.2rem",
+            fontWeight: 600,
+            letterSpacing: "0.5px",
+          }}
+        >
+          Home Control Dashboard
+        </h1>
 
-    <button
-      onClick={onRefresh}
-      disabled={!isAuthenticated}
-      style={{
-        width: "40px",
-        height: "40px",
-        backgroundColor: !isAuthenticated ? "#555" : "#333",
-        border: "none",
-        borderRadius: "8px",
-        padding: "8px",
-        cursor: !isAuthenticated ? "not-allowed" : "pointer",
-        color: !isAuthenticated ? "#888" : "#fff",
-        flexShrink: 0,       // prevent shrinking
-      }}
-      title="Refresh"
-    >
-      🔄
-    </button>
-  </div>
-</div>
+        <div style={{ display: "flex", gap: "12px" }}>
+          <button
+            onClick={onSignIn}
+            title="Sign In"
+            style={{
+              padding: "8px 16px",
+              background: "#2a2a2a",
+              borderRadius: "8px",
+              border: "1px solid #444",
+              color: "#fff",
+              fontWeight: "bold",
+              cursor: "pointer",
+              transition: "all 0.2s ease-in-out",
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.background = "#444")}
+            onMouseOut={(e) => (e.currentTarget.style.background = "#2a2a2a")}
+          >
+            Sign In
+          </button>
 
+          <button
+            onClick={onRefresh}
+            disabled={!isAuthenticated}
+            title="Refresh"
+            style={{
+              width: "40px",
+              height: "40px",
+              borderRadius: "50%",
+              border: "none",
+              fontSize: "1.2rem",
+              background: isAuthenticated ? "#2a2a2a" : "#3a3a3a",
+              color: isAuthenticated ? "#fff" : "#777",
+              cursor: isAuthenticated ? "pointer" : "not-allowed",
+              transition: "all 0.2s ease-in-out",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onMouseOver={(e) => {
+              if (isAuthenticated) e.currentTarget.style.background = "#444";
+            }}
+            onMouseOut={(e) => {
+              if (isAuthenticated) e.currentTarget.style.background = "#2a2a2a";
+            }}
+          >
+            🔄
+          </button>
+        </div>
+      </header>
 
-      {/* Grid Content */}
-      <div
+      {/* Content Grid */}
+      <main
         style={{
           flex: 1,
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-          gap: "16px",
           padding: "16px",
-          overflowY: "auto",
+          margin: "0 auto",
           width: "100%",
+          maxWidth: "1400px",
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+          gap: "12px",
+          overflowY: "auto",
         }}
       >
         {React.Children.map(children, (child, index) => (
-          <div
-            tabIndex={index === 0 || index === 2 ? 0 : undefined}
-            style={{ width: "100%" }}
-          >
+          <div tabIndex={index === 0 || index === 2 ? 0 : undefined}>
             {child}
           </div>
         ))}
-      </div>
+      </main>
     </div>
   );
 };
