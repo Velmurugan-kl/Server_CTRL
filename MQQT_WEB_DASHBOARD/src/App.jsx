@@ -248,6 +248,7 @@ function App() {
       <Layout
         onRefresh={handleRefresh}
         onSignIn={handleSignIn}
+        onSignOut={handleLogout}
         isAuthenticated={isAuthenticated}
       >
         <StatusButtonCard

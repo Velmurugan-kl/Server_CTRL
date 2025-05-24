@@ -1,6 +1,6 @@
 import React from "react";
 
-const Layout = ({ children, onRefresh, onSignIn, isAuthenticated }) => {
+const Layout = ({ children, onRefresh, onSignIn, onSignOut, isAuthenticated }) => {
   return (
     <div
       style={{
@@ -40,8 +40,8 @@ const Layout = ({ children, onRefresh, onSignIn, isAuthenticated }) => {
 
         <div style={{ display: "flex", gap: "12px" }}>
           <button
-            onClick={onSignIn}
-            title="Sign In"
+            onClick={isAuthenticated ? onSignOut : onSignIn}
+            title={isAuthenticated ? "Sign Out" : "Sign In"}
             style={{
               padding: "8px 16px",
               background: "#2a2a2a",
@@ -55,7 +55,7 @@ const Layout = ({ children, onRefresh, onSignIn, isAuthenticated }) => {
             onMouseOver={(e) => (e.currentTarget.style.background = "#444")}
             onMouseOut={(e) => (e.currentTarget.style.background = "#2a2a2a")}
           >
-            Sign In
+            {isAuthenticated ? "Sign Out" : "Sign In"}
           </button>
 
           <button
