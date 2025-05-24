@@ -101,6 +101,52 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const expiry = parseInt(localStorage.getItem("auth_expiry"), 10);
+    if (isNaN(expiry)) {
+      setIsAuthenticated(false);
+      return;
+    }
+
+    const timeLeft = expiry - Date.now();
+
+    if (timeLeft <= 0) {
+      // Expired already
+      handleLogout();
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      handleLogout();
+      toast.info("Session expired, please sign in again.");
+    }, timeLeft);
+
+    return () => clearTimeout(timeout);
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    const auth = localStorage.getItem("authenticated");
+    const expiry = parseInt(localStorage.getItem("auth_expiry"), 10);
+
+    if (auth === "true" && !isNaN(expiry) && Date.now() < expiry) {
+      setIsAuthenticated(true);
+    } else {
+      localStorage.removeItem("authenticated");
+      localStorage.removeItem("auth_expiry");
+      localStorage.removeItem("token");
+      setIsAuthenticated(false);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("auth_expiry");
+    localStorage.removeItem("authenticated");
+    setIsAuthenticated(false);
+  };
+
   const handleRefresh = () => {
     console.log("Refreshing...");
     toast.info("Refreshing");
@@ -153,13 +199,43 @@ function App() {
   const handleSignIn = () => {
     setShowPasswordModal(true);
   };
+  const SESSION_TIMEOUT = 10 * 60 * 1000; // 10 minutes
 
-  const handlePasswordSubmit = (password) => {
+  const handlePasswordSubmit = async (password) => {
     setShowPasswordModal(false);
-    if (password === import.meta.env.VITE_LOCAL_PASSWORD) {
+
+    try {
+      const response = await fetch(
+        "https://server-ctrl.onrender.com/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: "admin", // or dynamically set
+            password,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Invalid credentials");
+      }
+
+      const data = await response.json();
+
+      // Store token and expiry in localStorage
+      const expiration = Date.now() + SESSION_TIMEOUT;
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("auth_expiry", expiration.toString());
+      localStorage.setItem("authenticated", "true"); // <--- Add this
       setIsAuthenticated(true);
-    } else {
-      alert("Incorrect password");
+
+      toast.success("Authenticated successfully");
+    } catch (err) {
+      console.error(err);
+      toast.error("Authentication failed: " + err.message);
     }
   };
 
