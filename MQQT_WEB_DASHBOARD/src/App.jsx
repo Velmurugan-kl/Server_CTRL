@@ -103,6 +103,7 @@ function App() {
 
   const handleRefresh = () => {
     console.log("Refreshing...");
+    toast.info("Refreshing");
     setRefreshing(true);
     responseReceivedRef.current = false;
 
@@ -127,6 +128,7 @@ function App() {
     if (client && client.connected) {
       client.publish(import.meta.env.VITE_SERVER_STATUS_PATH, serverCommand);
       console.log("SERVER COMMAND SENT----->" + serverCommand);
+      toast.success("Server command sent: " + serverCommand);
     }
   };
 
@@ -135,6 +137,7 @@ function App() {
     if (client && client.connected) {
       client.publish(import.meta.env.VITE_ROUTER_STATUS_PATH, routerCommand);
       console.log("ROUTER COMMAND SENT----->" + routerCommand);
+      toast.success("Router command sent: " + routerCommand);
     }
   };
 
@@ -143,6 +146,7 @@ function App() {
     if (client && client.connected) {
       client.publish(import.meta.env.VITE_PWR_PATH, powerCommand);
       console.log("POWER COMMAND SENT----->" + powerCommand);
+      toast.success("Main Power command sent: " + powerCommand);
     }
   };
 
@@ -201,7 +205,17 @@ function App() {
           onClose={handlePasswordCancel}
         />
       )}
-      <ToastContainer position="top-center" autoClose={9000} />
+      <ToastContainer
+        position="top-center"
+        autoClose={4000} // faster popup close
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </>
   );
 }
